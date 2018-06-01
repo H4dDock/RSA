@@ -117,6 +117,7 @@ public class GenerateSimpleNum {
 		d.n = 2;
 		Zahlen calc1 = new Zahlen();
 		calc1.number.add(0);
+		calc1.n = 0;
 		Zahlen ik = new Zahlen();
 		for(int k = 0; k < dop_evkl.size()-1; k++) {
 			ik = d;

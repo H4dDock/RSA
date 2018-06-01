@@ -60,6 +60,7 @@ class Natural {
 	static Natural Generate_random_fift(int min_symb, int max_symb) {
 		Natural a = new Natural();
 		int i = 0;
+		int check;
 		
 		if(min_symb == max_symb) {
 			a.x.add(1 + (int)Math.floor(Math.random()*9));
@@ -71,7 +72,10 @@ class Natural {
 				if(i == max_symb-min_symb) {
 					a.x.add(1 + (int)Math.floor(Math.random()*9));
 				}else {
-					a.x.add((int)(Math.random()*10));
+					check = (int)(Math.random()*10);
+					if(check != 0) {
+						a.x.add(check);
+					}
 				}
 			}
 		}

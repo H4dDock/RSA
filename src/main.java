@@ -17,7 +17,7 @@ public class main {
 		Natural q = new Natural();
 		while(flag != 2) {
 			p = Natural.ADD_1N_N(p);
-			if(GenerateSimpleNum.CheckForSimpleByMiller(p,7)) {
+			if(GenerateSimpleNum.CheckForSimpleByMiller(p,12)) {
 				flag++;
 				if(flag == 1){
 					q = p;
@@ -39,7 +39,7 @@ public class main {
 		Natural d = new Natural();
 		do {
 			d = GenerateSimpleNum.Diafant(e, fi);
-		}while(Natural.NaturalToNormalString(d) == "1"); 
+		}while(d.x.equals(new Natural(1).x));
 		
 		FileReader input = new FileReader("input.txt");
 		FileWriter output = new FileWriter("output.txt");
