@@ -19,7 +19,7 @@ public class GenerateSimpleNum {
 		
 		for(int i = 0; i < count_rounds; i++) {
 			Natural a = Natural.Generate_random_fift(2, number.x.size()-2);
-			Natural xx = Natural.Stepen(a, tt, number);
+			Natural xx = Natural.ModPow(a, tt, number);
 			
 
 			if(xx.x.equals(new Natural(1).x) || xx.x.equals(Natural.SUB_NN_N(number, new Natural(1)))) {
@@ -28,7 +28,7 @@ public class GenerateSimpleNum {
 		
 			
 			for (int r = 1; r < s; r++) {
-				xx = Natural.Stepen(xx, new Natural(2), number);
+				xx = Natural.ModPow(xx, new Natural(2), number);
 				
 				if(xx.x.equals(new Natural(1).x)) {
 					return false;
