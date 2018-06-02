@@ -1,5 +1,3 @@
-
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 
@@ -57,6 +55,14 @@ class Natural {
 		return c;
 	}
 	
+	public static long ReturnSumOf(Natural a) {
+		long s = 0;
+		for(int i = 0; i < a.x.size(); i++) {
+			s += a.x.get(i);
+		}
+		return s;
+	}
+	
 	static Natural Generate_random_fift(int min_symb, int max_symb) {
 		Natural a = new Natural();
 		int i = 0;
@@ -78,6 +84,9 @@ class Natural {
 					}
 				}
 			}
+		}
+		if(a.x.get(a.x.size()-1) % 2 == 0) {
+			a.x.set(a.x.size()-1, a.x.get(a.x.size()-1)+1);
 		}
 		
 		return a;
@@ -320,7 +329,7 @@ class Natural {
 		return c1;
 	}
 	
-	static Natural Stepen(Natural a, Natural b, Natural c) {
+	static Natural ModPow(Natural a, Natural b, Natural c) {
 		Natural b1 = new Natural(new ArrayList<Integer>(b.x));
 		Natural a1 = new Natural(new ArrayList<Integer>(a.x));
 		ArrayList<Integer> h = new ArrayList<>();
@@ -467,7 +476,7 @@ class Natural {
 		return r1;
 	}
 	
-	static Natural ModPow(Natural osnovanie, Natural stepen, Natural mod) {
+	/*static Natural ModPow(Natural osnovanie, Natural stepen, Natural mod) {
 		BigInteger osnovanie1 = new BigInteger(Natural.NaturalToNormalString(osnovanie));
 		BigInteger stepen1 = new BigInteger(Natural.NaturalToNormalString(stepen));
 		BigInteger mod1 = new BigInteger(Natural.NaturalToNormalString(mod));
@@ -476,7 +485,7 @@ class Natural {
 		Natural answer = new Natural(x.toString());
 		
 		return answer;
-	}
+	}*/
 	
 	
 }
