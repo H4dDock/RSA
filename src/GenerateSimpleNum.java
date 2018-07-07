@@ -1,141 +1,102 @@
-import java.util.ArrayList;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class GenerateSimpleNum {
 	
-	static boolean CheckForSimpleByMiller(Natural number, int count_rounds) {
+	static BigInteger ONE = new BigInteger("1");
+	static BigInteger TWO = new BigInteger("2");
+	static BigInteger ZERO = new BigInteger("0");
+	
+	static BigInteger GenerateRandom(long min_size, long max_size) {
+		String num = "";
+		Random rnd = new Random(System.currentTimeMillis());
 		
-		if(number.x.get(number.x.size()-1) % 2 == 0) return false;
-		
-		Natural tt = Natural.SUB_NN_N(number, new Natural(1));
-		int s = 0;
-		
-
-		while(Natural.MOD_NN_N(tt, new Natural(2)) == new Natural(0)) {
-			tt = Natural.DIV_NN_N(tt, new Natural(2));
-			s++;
+		for (int i = 0; i < max_size; i++) {
+			if(i == max_size - min_size) {
+				num = num + (1 + (int)rnd.nextInt(9));
+			}
+			num = num + (int)rnd.nextInt(10);
 		}
 		
-		for(int i = 0; i < count_rounds; i++) {
-			Natural a = Natural.Generate_random_fift(2, number.x.size()-2);
-			Natural xx = Natural.ModPow(a, tt, number);
+		BigInteger output = new BigInteger(num);
+		if(output.mod(TWO).equals(ZERO)) {
+			output = output.add(ONE);
+		}
+		return output;
+	}
+	
+	static boolean CheckForSimpleByMiller(BigInteger number, int count_rounds) {
+		BigInteger tt = number.subtract(ONE);
+		int s = 0;
+		
+		while(tt.mod(TWO).equals(ZERO)) {
+			tt = tt.divide(TWO);
+			s++;
 			
-
-			if(xx.x.equals(new Natural(1).x) || xx.x.equals(Natural.SUB_NN_N(number, new Natural(1)))) {
+		}
+		
+		BigInteger a, xx;
+		for(long i = 0; i < count_rounds; i++) {
+			a = GenerateRandom(2, number.toString().length()-2);
+			xx = a.modPow(tt, number);
+			
+			if(xx.equals(ONE) || xx.equals(number.subtract(ONE))) {
 				continue;
 			}
-		
 			
-			for (int r = 1; r < s; r++) {
-				xx = Natural.ModPow(xx, new Natural(2), number);
+			for(int r = 1; r < s; r++) {
+				xx = xx.modPow(TWO, number);
 				
-				if(xx.x.equals(new Natural(1).x)) {
+				if(xx.equals(ONE)) {
 					return false;
 				}
 				
-				if(xx.x.equals(Natural.SUB_NN_N(number, new Natural(1)))) {
+				if(xx.equals(number.subtract(ONE))) {
 					break;
 				}
 			}
 			
-			
-			if(!xx.x.equals(Natural.SUB_NN_N(number, new Natural(1)))) {
+			if(!xx.equals(number.subtract(ONE))) {
 				return false;
 			}
-			
 			
 		}
 		return true;
 	}
 	
-	
-	 /*static boolean CheckForSimpleByMiller(Natural number, int count_rounds) {
-		if(number.x.get(number.x.size()-1) % 2 == 0) return false;
+	static BigInteger Diafant(BigInteger e, BigInteger fi) {
 		
-		BigInteger num = new BigInteger(Natural.NaturalToNormalString(number));
-		
-		BigInteger t = num.subtract(BigInteger.valueOf(1));
-		int s = 0;
-		
-		while(t.mod(BigInteger.valueOf(2)) == BigInteger.valueOf(0)) {
-			t = t.divide(BigInteger.valueOf(2));
-			s++;
-		}
-		
-		for(int i = 0; i < count_rounds; i++) {
-			Natural a = Natural.Generate_random_fift(2, number.x.size()-2);
-			BigInteger a1 = new BigInteger(Natural.NaturalToNormalString(a));
-			BigInteger x = a1.modPow(t, num);
-			
-			if(x.equals(BigInteger.valueOf(1)) || x.equals(num.subtract(BigInteger.valueOf(1)))) {
-				continue;
-			}
-			
-			for (int r = 1; r < s; r++) {
-				
-			}
-			
-			for (int r = 1; r < s; r++) {
-				x = x.modPow(BigInteger.valueOf(2), num);
-				
-				if(x.equals(BigInteger.valueOf(1))) {
-					return false;
-				}
-				
-				if(x.equals(num.subtract(BigInteger.valueOf(1)))) {
-					break;
-				}
-			}
-			
-			if(!x.equals(num.subtract(BigInteger.valueOf(1)))) {
-				return false;
-			}
-			
-		}
-		
-		return true;
-	}*/
-	 
-	
-	static Natural Diafant(Natural e, Natural fi) {
-		ArrayList<Natural> evklid = new ArrayList<>();
-		ArrayList<Natural> dop_evkl = new ArrayList<>();
+		ArrayList<BigInteger> evklid = new ArrayList<>();
+		ArrayList<BigInteger> dop_evkl = new ArrayList<>();
 		evklid.add(fi);
 		evklid.add(e);
-		int fuck = 1;
-		Natural i = new Natural();
 		ArrayList<Integer> x = new ArrayList(); x.add(1);
 		
-		Natural calc = new Natural(1);
-		while(evklid.get(evklid.size()-1).x.get(0) != 0) {
-			dop_evkl.add(Natural.DIV_NN_N(evklid.get(evklid.size()-2), evklid.get(evklid.size()-1)));
-			evklid.add(Natural.MOD_NN_N(evklid.get(evklid.size()-2), evklid.get(evklid.size()-1)));
+		while(!evklid.get(evklid.size()-1).equals(ZERO)) {
+			dop_evkl.add(evklid.get(evklid.size()-2).divide(evklid.get(evklid.size()-1)));
+			evklid.add(evklid.get(evklid.size()-2).mod(evklid.get(evklid.size()-1)));
 		}
 		
 		
-		Zahlen d = new Zahlen();
-		d.number.add(1);
-		d.n = 2;
-		Zahlen calc1 = new Zahlen();
-		calc1.number.add(0);
-		calc1.n = 0;
-		Zahlen ik = new Zahlen();
+		BigInteger d = new BigInteger("1");
+		BigInteger calc1 = new BigInteger("0");
+		BigInteger ik;
 		for(int k = 0; k < dop_evkl.size()-1; k++) {
 			ik = d;
-			d = Zahlen.SUB_ZZ_Z(calc1, Zahlen.MUL_ZZ_Z(d, Zahlen.TRANS_N_Z(dop_evkl.get(k))));
+			d = calc1.subtract(d.multiply(dop_evkl.get(k)));
 			calc1 = ik;
 		}
 		
-		if(d.n == 2) {
-		}else if(d.n == 1) {
-			d = Zahlen.ADD_ZZ_Z(d, Zahlen.TRANS_N_Z(fi));
+		if(d.compareTo(ZERO) > 0) {
+		}else if(d.compareTo(ZERO) < 0) {
+			d = d.add(fi);
 		}else {
 			System.out.println("Fantastic");
 		}
 		
-		return Zahlen.TRANS_Z_N_NoMath(d);
+		return d;
 	}
-	
 	
 }

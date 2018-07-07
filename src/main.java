@@ -7,75 +7,96 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class main {
+	
+	static String ReturnStringNumber(int a) {
+		String output = "";
+		output += a;
+		while(output.length() < 5) {
+			output = "0" + output;
+		}
+		
+		return output;
+	}
 
 	public static void main(String[] args) throws IOException {
+	
 		Scanner in = new Scanner(System.in);
 		short flag = 0;
 		int k = 0;
 		System.out.print("Etner order of the number to generation (10^k, enter k): ");
 		k = in.nextInt();
-		long startTime = System.currentTimeMillis();
 		
-		Natural p = Natural.Generate_random_fift(k,k);
-		Natural q = new Natural();
+		long startTime = System.currentTimeMillis();
+		BigInteger p = GenerateSimpleNum.GenerateRandom(k, k);
+		BigInteger q = new BigInteger("1");
 		System.out.println("Starting of the generation prime numbers. This may take some time.\n");
+		
 		while(flag != 2) {
-			//p = Natural.ADD_1N_N(p);
-			p = Natural.ADD_NN_N(p, new Natural(2));
-			if(Natural.ReturnSumOf(p) % 3 == 0) continue;
-			if(p.x.get(p.x.size()-1) == 0 || p.x.get(p.x.size()-1) == 5) continue;
+			p = p.add(new BigInteger("2"));
+			if ((p.mod(new BigInteger("2"))).equals(new BigInteger("0"))) continue;
+			if ((p.mod(new BigInteger("3"))).equals(new BigInteger("0"))) continue;
+			if ((p.mod(new BigInteger("5"))).equals(new BigInteger("0"))) continue;
+			if ((p.mod(new BigInteger("11"))).equals(new BigInteger("0"))) continue;
+			if ((p.mod(new BigInteger("17"))).equals(new BigInteger("0"))) continue;
 			if(GenerateSimpleNum.CheckForSimpleByMiller(p,15)) {
-				flag++;
-				if(flag == 1){
-					q = p;
-					p = Natural.Generate_random_fift(k,k);
-				}
+					flag++;
+					if(flag == 1){
+						q = p;
+						p = GenerateSimpleNum.GenerateRandom(k, k);
+					}
 			}
 		}
+		
+		System.out.println("Prime numbers:\n" + p.toString() + "\n" + q.toString());
 		System.out.println("Generation of prime numbers end. Start key generation");
 		
-		Natural N = Natural.MUL_NN_N(p, q); 
-		System.out.println("N calculated: "+Natural.NaturalToNormalString(N));
-		Natural fi = Natural.MUL_NN_N(Natural.SUB_NN_N(p, new Natural(1)), Natural.SUB_NN_N(q, new Natural(1))); //Checked
-		System.out.println("fi calculated: "+Natural.NaturalToNormalString(fi));
+		BigInteger N = p.multiply(q); 
+		System.out.println("N calculated: " + N.toString());
 		
-		Natural e = Natural.Generate_random_fift(1,k-5);
+		BigInteger fi = p.subtract(new BigInteger("1")).multiply(q.subtract(new BigInteger("1"))); //!
+		System.out.println("fi calculated: " + fi.toString());
+		
+		BigInteger e = GenerateSimpleNum.GenerateRandom(10, k-5);
 		
 		flag = 0;
 		while(flag == 0) {
-			e = Natural.ADD_NN_N(e, new Natural(2));
-			if(Natural.ReturnSumOf(e) % 3 == 0) continue;
-			if(e.x.get(e.x.size()-1) == 0 || e.x.get(e.x.size()-1) == 5) continue;
+			e = e.add(new BigInteger("2"));
+			if (e.mod(new BigInteger("3")).equals(new BigInteger("0"))) continue;
+			if (e.mod(new BigInteger("5")).equals(new BigInteger("0"))) continue;
 			if (GenerateSimpleNum.CheckForSimpleByMiller(e,15)) {
 				flag = 1;
 			}
 		}
-		System.out.println("e is calculated: "+Natural.NaturalToNormalString(e));
+		System.out.println("e is calculated: " + e.toString());
 		
-		Natural d = new Natural();
+		BigInteger d;
 		do {
 			d = GenerateSimpleNum.Diafant(e, fi);
-		}while(d.x.equals(new Natural(1).x));
-		System.out.println("d is calculated: "+Natural.NaturalToNormalString(d));
+		}while(d.equals(new BigInteger("1")));
+		System.out.println("d is calculated: "+d.toString());
 		
-		System.out.println("Open key:\n     "+Natural.NaturalToNormalString(e)+"\n     "+Natural.NaturalToNormalString(N));
-		System.out.println("Close key:\n     "+Natural.NaturalToNormalString(d)+"\n     "+Natural.NaturalToNormalString(N));
+		System.out.println("Open key:\n     "+e.toString()+"\n     "+N.toString());
+		System.out.println("Close key:\n     "+d.toString()+"\n     "+N.toString());
 		
 		
 		FileWriter output = new FileWriter("output.txt");
 		Scanner InputIn = new Scanner(new File("input.txt"));
 		String stroka;
-		int symb;
+		String symb_str="";
+		BigInteger symb;
 		
 		System.out.println("Text is encrypting, don't panic this can take some time, the program work fine.");
+		System.out.println("Text translated into numbers:");
+		
 		
 		while(InputIn.hasNext()){
 			stroka = InputIn.nextLine();
-			for(int i = 0; i<stroka.length(); i++) {
-				symb = stroka.charAt(i);
-				output.write(Natural.NaturalToNormalString(Natural.ModPow(new Natural(""+symb), e, N)));
+			for(int i = 0; i < stroka.length(); i++) {
+				symb = new BigInteger(""+(int)stroka.charAt(i));
+				output.write(symb.modPow(e, N).toString());
 				output.write("\n");
 			}
+			stroka = "";
 		}
 		output.close();
 		System.out.println("Text is encrypted");
@@ -83,21 +104,20 @@ public class main {
 		
 		output = new FileWriter("Otvet.txt");
 		InputIn = new Scanner (new File("output.txt"));
-		char a;
+		int x=0;
+		String otvet = "";
 		
 		while(InputIn.hasNext()) {
 			stroka = InputIn.nextLine();
-			symb = Integer.parseInt(Natural.NaturalToNormalString(Natural.ModPow(new Natural(stroka), d, N)));
-			output.write(""+(char)symb);
-			if(symb == '\n') output.write("\n");
+			symb = new BigInteger(stroka);
+			output.write((char)(symb.modPow(d, N).intValue()));
 		}
+	
 		output.close();
-		
-		
+		System.out.println("The text is decrypted");
 		
 		long timeSpent = System.currentTimeMillis() - startTime;
 		System.out.println("the program was executed " + timeSpent + " milliseconds");
-		
 	}
 
 }
