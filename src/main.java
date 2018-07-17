@@ -82,35 +82,53 @@ public class main {
 		FileWriter output = new FileWriter("output.txt");
 		Scanner InputIn = new Scanner(new File("input.txt"));
 		String stroka;
+		String karetka;
 		String symb_str="";
 		BigInteger symb;
 		
-		System.out.println("Text is encrypting, don't panic this can take some time, the program work fine.");
-		System.out.println("Text translated into numbers:");
+		System.out.println("Text is encrypting");
 		
 		
 		while(InputIn.hasNext()){
 			stroka = InputIn.nextLine();
 			for(int i = 0; i < stroka.length(); i++) {
-				symb = new BigInteger(""+(int)stroka.charAt(i));
-				output.write(symb.modPow(e, N).toString());
-				output.write("\n");
+				karetka = ""+(int)stroka.charAt(i);
+				while(karetka.length() < 4) {
+					karetka = "0" + karetka;
+				}
+				symb_str += karetka;
+				if(symb_str.length() == 32) { //8 symbols
+					symb = new BigInteger(symb_str);
+					output.write(symb.modPow(e, N).toString());
+					output.write("\n");
+					symb_str = "";
+				}
 			}
 			stroka = "";
 		}
 		output.close();
+		karetka = "";
 		System.out.println("Text is encrypted");
 		
 		
 		output = new FileWriter("Otvet.txt");
 		InputIn = new Scanner (new File("output.txt"));
-		int x=0;
 		String otvet = "";
 		
 		while(InputIn.hasNext()) {
 			stroka = InputIn.nextLine();
 			symb = new BigInteger(stroka);
-			output.write((char)(symb.modPow(d, N).intValue()));
+			symb = symb.modPow(d, N);
+			for(int j = symb.toString().length()-4; j >= 0; j -= 4) {
+				karetka = symb.toString().substring(j, j+4);
+				otvet = (char)Integer.parseInt(karetka) + otvet;
+				if(j < 4 && j != 0) {
+					karetka = symb.toString().substring(0, j);
+					otvet = (char)Integer.parseInt(karetka) + otvet;
+				}
+			}
+			output.write(otvet);
+			otvet = "";
 		}
 	
 		output.close();
