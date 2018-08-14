@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 /**
  * 
- * @author Default
+ * @author H4dDock
  *
  */
 
