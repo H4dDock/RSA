@@ -7,3 +7,4 @@ To speed up the algorithm and make it more crypto-resistant, block encryption wi
 # Update history
 Version 2.0 - Big Update<br>
 Version 2.1 - Added block encryption.<br>
+Version 2.2 - Small bugfix, rework code. <br>
